@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { AppProvider } from "@channel.io/bezier-react";
 import "@channel.io/bezier-react/styles.css";
 
 import App from "./App";
+import SystemThemeProvider from "./SystemThemeProvider";
 import "./styles.css";
 
 const root = document.getElementById("root");
@@ -15,8 +15,8 @@ if (!root) {
 
 createRoot(root).render(
   <StrictMode>
-    <AppProvider themeName="dark">
+    <SystemThemeProvider>
       <App />
-    </AppProvider>
+    </SystemThemeProvider>
   </StrictMode>,
 );

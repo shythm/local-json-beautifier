@@ -12,11 +12,13 @@ test("uses a minimal React and Vite project structure", () => {
   const viteConfig = readRequired("vite.config.ts");
   const indexHtml = readRequired("index.html");
   const mainSource = readRequired("src/main.tsx");
+  const systemThemeProvider = readRequired("src/SystemThemeProvider.tsx");
   const styles = readRequired("src/styles.css");
 
   for (const path of [
     "src/main.tsx",
     "src/App.tsx",
+    "src/SystemThemeProvider.tsx",
     "src/json-utils.ts",
     "src/styles.css",
   ]) {
@@ -32,7 +34,11 @@ test("uses a minimal React and Vite project structure", () => {
   assert.equal(packageJson.dependencies["@channel.io/bezier-react"], "4.0.0-next.12");
   assert.equal(packageJson.dependencies["@channel.io/bezier-icons"], "0.60.0");
   assert.match(mainSource, /@channel\.io\/bezier-react\/styles\.css/);
-  assert.match(mainSource, /<AppProvider themeName="dark">/);
+  assert.match(mainSource, /<SystemThemeProvider>/);
+  assert.doesNotMatch(mainSource, /<AppProvider themeName=/);
+  assert.match(systemThemeProvider, /\(prefers-color-scheme: dark\)/);
+  assert.match(systemThemeProvider, /addEventListener\("change"/);
+  assert.match(systemThemeProvider, /removeEventListener\("change"/);
   assert.match(styles, /var\(--color-surface\)/);
   assert.match(styles, /var\(--color-surface-high\)/);
   assert.match(styles, /var\(--color-border-neutral\)/);
