@@ -1,7 +1,16 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AppProvider } from "@channel.io/bezier-react";
 
 import App from "./App";
+
+function renderApp() {
+  return render(
+    <AppProvider themeName="dark">
+      <App />
+    </AppProvider>,
+  );
+}
 
 describe("Local JSON Beautifier", () => {
   beforeEach(() => {
@@ -21,7 +30,7 @@ describe("Local JSON Beautifier", () => {
   }
 
   it("formats JSON automatically 250ms after input", async () => {
-    render(<App />);
+    renderApp();
 
     fireEvent.change(screen.getByLabelText("JSON input"), {
       target: { value: '{"name":"Ada"}' },
@@ -39,15 +48,17 @@ describe("Local JSON Beautifier", () => {
   });
 
   it("reformats immediately when indentation changes and saves the preference", async () => {
-    render(<App />);
+    renderApp();
     fireEvent.change(screen.getByLabelText("JSON input"), {
       target: { value: '{"ok":true}' },
     });
     await finishDebounce();
 
-    fireEvent.change(screen.getByLabelText("Indentation"), {
-      target: { value: "4" },
+    fireEvent.click(screen.getByRole("button", { name: "Indentation" }));
+    await act(async () => {
+      vi.advanceTimersByTime(32);
     });
+    fireEvent.click(screen.getByRole("option", { name: "4 spaces" }));
 
     expect(screen.getByLabelText("Formatted JSON").textContent).toContain(
       '\n    "ok": true',
@@ -56,7 +67,7 @@ describe("Local JSON Beautifier", () => {
   });
 
   it("keeps the last valid result and marks it stale for invalid input", async () => {
-    render(<App />);
+    renderApp();
     const input = screen.getByLabelText("JSON input");
     fireEvent.change(input, { target: { value: '{"ok":true}' } });
     await finishDebounce();
@@ -75,7 +86,7 @@ describe("Local JSON Beautifier", () => {
   });
 
   it("loads a sample and clears both panes", async () => {
-    render(<App />);
+    renderApp();
 
     fireEvent.click(screen.getByRole("button", { name: "Load sample" }));
     await finishDebounce();
@@ -100,7 +111,7 @@ describe("Local JSON Beautifier", () => {
       configurable: true,
       value: { writeText },
     });
-    render(<App />);
+    renderApp();
     const copy = screen.getByRole("button", { name: "Copy formatted JSON" });
     expect(copy).toBeDisabled();
 
@@ -113,5 +124,18 @@ describe("Local JSON Beautifier", () => {
 
     expect(writeText).toHaveBeenCalledWith('{\n  "ok": true\n}');
     expect(screen.getByRole("status")).toHaveTextContent("Copied");
+  });
+
+  it("exposes the Bezier toolbar actions with their existing accessible names", () => {
+    renderApp();
+
+    expect(
+      screen.getByRole("button", { name: "Indentation" }),
+    ).toHaveTextContent("2 spaces");
+    expect(screen.getByRole("button", { name: "Load sample" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Clear input" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Copy formatted JSON" }),
+    ).toBeDisabled();
   });
 });

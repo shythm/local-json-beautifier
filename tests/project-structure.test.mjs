@@ -11,6 +11,8 @@ test("uses a minimal React and Vite project structure", () => {
   const packageJson = JSON.parse(readRequired("package.json"));
   const viteConfig = readRequired("vite.config.ts");
   const indexHtml = readRequired("index.html");
+  const mainSource = readRequired("src/main.tsx");
+  const styles = readRequired("src/styles.css");
 
   for (const path of [
     "src/main.tsx",
@@ -22,9 +24,24 @@ test("uses a minimal React and Vite project structure", () => {
   }
 
   assert.deepEqual(Object.keys(packageJson.dependencies).sort(), [
+    "@channel.io/bezier-icons",
+    "@channel.io/bezier-react",
     "react",
     "react-dom",
   ]);
+  assert.equal(packageJson.dependencies["@channel.io/bezier-react"], "4.0.0-next.12");
+  assert.equal(packageJson.dependencies["@channel.io/bezier-icons"], "0.60.0");
+  assert.match(mainSource, /@channel\.io\/bezier-react\/styles\.css/);
+  assert.match(mainSource, /<AppProvider themeName="dark">/);
+  assert.match(styles, /var\(--color-surface\)/);
+  assert.match(styles, /var\(--color-surface-high\)/);
+  assert.match(styles, /var\(--color-border-neutral\)/);
+  assert.match(styles, /var\(--color-text-neutral\)/);
+  assert.match(styles, /var\(--color-state-focus\)/);
+  assert.doesNotMatch(styles, /--bg:/);
+  assert.doesNotMatch(styles, /--surface:/);
+  assert.doesNotMatch(styles, /font-family:\s*Inter/);
+  assert.doesNotMatch(styles, /https?:\/\//);
   assert.match(packageJson.scripts.dev, /^vite\b/);
   assert.match(packageJson.scripts.build, /tsc --noEmit/);
   assert.match(packageJson.scripts.build, /vite build/);

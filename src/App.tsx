@@ -1,4 +1,11 @@
 import { useEffect, useState } from "react";
+import {
+  Badge,
+  Button,
+  Select,
+  SelectOption,
+  Text,
+} from "@channel.io/bezier-react/beta";
 
 import {
   formatJson,
@@ -107,49 +114,60 @@ export default function App() {
             {"{ }"}
           </div>
           <div>
-            <h1>JSON Beautifier</h1>
-            <p>Format locally. Nothing leaves your browser.</p>
+            <Text as="h1" typo="30" bold>
+              JSON Beautifier
+            </Text>
+            <Text as="p" typo="13" color="text-neutral-lighter">
+              Format locally. Nothing leaves your browser.
+            </Text>
           </div>
         </div>
 
         <div className="toolbar" aria-label="Formatting tools">
-          <label className="select-label" htmlFor="indentation">
-            <span>Indentation</span>
-            <select
-              id="indentation"
+          <div className="select-label">
+            <Text as="span" typo="12" color="text-neutral-lighter">
+              Indentation
+            </Text>
+            <Select
+              aria-label="Indentation"
               value={indent === "\t" ? "tab" : String(indent)}
-              onChange={(event) => handleIndentChange(event.target.value)}
+              onValueChange={handleIndentChange}
+              triggerSize="m"
+              dropdownWidth={160}
             >
-              <option value="2">2 spaces</option>
-              <option value="4">4 spaces</option>
-              <option value="tab">Tab</option>
-            </select>
-          </label>
-          <button
-            className="button secondary"
+              <SelectOption value="2" label="2 spaces" />
+              <SelectOption value="4" label="4 spaces" />
+              <SelectOption value="tab" label="Tab" />
+            </Select>
+          </div>
+          <Button
+            label="Load sample"
+            variant="filled"
+            semantic="secondary"
+            size="m"
             type="button"
             onClick={() => handleSourceChange(SAMPLE_JSON)}
-          >
-            Load sample
-          </button>
-          <button
-            className="button secondary"
+          />
+          <Button
+            label="Clear input"
+            variant="filled"
+            semantic="secondary"
+            size="m"
             type="button"
             onClick={() => handleSourceChange("")}
             disabled={!source}
-          >
-            Clear input
-          </button>
+          />
         </div>
       </header>
 
       <section className="status-strip" aria-label="Privacy and status">
-        <div className="privacy-note">
-          <span className="privacy-dot" aria-hidden="true" />
+        <Badge className="privacy-badge" size="s" variant="green">
           Local-only processing
-        </div>
+        </Badge>
         <div role="status" aria-live="polite" className={`status ${viewStatus}`}>
-          {statusText}
+          <Text as="span" typo="12">
+            {statusText}
+          </Text>
         </div>
       </section>
 
@@ -157,10 +175,19 @@ export default function App() {
         <article className="panel">
           <div className="panel-header">
             <div>
-              <span className="eyebrow">Source</span>
+              <Text as="span" className="eyebrow" typo="11" bold>
+                Source
+              </Text>
               <label htmlFor="json-input">JSON input</label>
             </div>
-            <span className="character-count">{source.length.toLocaleString()} chars</span>
+            <Text
+              as="span"
+              className="character-count"
+              typo="11"
+              color="text-neutral-lighter"
+            >
+              {source.length.toLocaleString()} chars
+            </Text>
           </div>
           <textarea
             id="json-input"
@@ -176,18 +203,23 @@ export default function App() {
         <article className="panel output-panel">
           <div className="panel-header">
             <div>
-              <span className="eyebrow">Result</span>
-              <span className="panel-title">Formatted JSON</span>
+              <Text as="span" className="eyebrow" typo="11" bold>
+                Result
+              </Text>
+              <Text as="span" className="panel-title" typo="14" bold>
+                Formatted JSON
+              </Text>
             </div>
-            <button
-              className="button primary"
+            <Button
+              label={copyFeedback === "Copied" ? "Copied" : "Copy"}
+              variant="filled"
+              semantic="primary"
+              size="m"
               type="button"
               onClick={handleCopy}
               disabled={viewStatus !== "valid" || !formatted}
               aria-label="Copy formatted JSON"
-            >
-              {copyFeedback === "Copied" ? "Copied" : "Copy"}
-            </button>
+            />
           </div>
 
           <div className="output-wrap">
@@ -204,7 +236,9 @@ export default function App() {
               {!formatted ? "Formatted output will appear here" : undefined}
             </pre>
             {viewStatus === "invalid" && formatted ? (
-              <span className="stale-badge">Last valid result</span>
+              <Badge className="stale-badge" size="s" variant="red">
+                Last valid result
+              </Badge>
             ) : null}
           </div>
         </article>
@@ -212,14 +246,22 @@ export default function App() {
 
       {error ? (
         <div className="error-banner" role="alert">
-          <strong>Couldn’t parse this JSON.</strong>
-          <span>{error}</span>
+          <Text as="strong" typo="12" bold>
+            Couldn’t parse this JSON.
+          </Text>
+          <Text as="span" typo="12">
+            {error}
+          </Text>
         </div>
       ) : null}
 
       <footer>
-        <span>Auto-formats 250 ms after you stop typing</span>
-        <span>No uploads · No tracking · No persistence</span>
+        <Text as="span" typo="11" color="text-neutral-lighter">
+          Auto-formats 250 ms after you stop typing
+        </Text>
+        <Text as="span" typo="11" color="text-neutral-lighter">
+          No uploads · No tracking · No persistence
+        </Text>
       </footer>
     </main>
   );
