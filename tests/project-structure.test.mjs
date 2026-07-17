@@ -44,6 +44,14 @@ test("uses a minimal React and Vite project structure", () => {
   assert.match(styles, /var\(--color-border-neutral\)/);
   assert.match(styles, /var\(--color-text-neutral\)/);
   assert.match(styles, /var\(--color-state-focus\)/);
+  assert.match(
+    styles,
+    /::selection\s*\{[^}]*var\(--color-state-action-light\)[^}]*var\(--color-text-neutral-heaviest\)/s,
+  );
+  assert.match(
+    styles,
+    /\.mark\s*\{[^}]*color:\s*var\(--color-text-neutral-heaviest\)/s,
+  );
   assert.doesNotMatch(styles, /--bg:/);
   assert.doesNotMatch(styles, /--surface:/);
   assert.doesNotMatch(styles, /font-family:\s*Inter/);

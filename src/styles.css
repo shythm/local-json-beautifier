@@ -26,6 +26,11 @@ body {
   font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+::selection {
+  background: var(--color-state-action-light);
+  color: var(--color-text-neutral-heaviest);
+}
+
 button,
 textarea {
   font: inherit;
@@ -69,7 +74,7 @@ textarea {
   border: 1px solid var(--color-border-neutral-heavy);
   border-radius: var(--radius-14);
   background: var(--color-fill-accent-blue);
-  color: var(--color-text-accent-blue);
+  color: var(--color-text-neutral-heaviest);
   font: 700 15px/1 var(--editor-font);
   letter-spacing: -0.08em;
 }
