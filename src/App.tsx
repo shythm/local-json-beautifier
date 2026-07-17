@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import {
   Badge,
   Button,
@@ -9,7 +9,7 @@ import {
 
 import {
   formatJson,
-  highlightJson,
+  highlightJsonWithLineNumbers,
   type FormatResult,
   type JsonIndent,
 } from "./json-utils";
@@ -106,6 +106,8 @@ export default function App() {
         : viewStatus === "invalid"
           ? "Check the highlighted error"
           : "Ready — paste JSON to begin");
+  const formattedLineCount = formatted ? formatted.split("\n").length : 0;
+  const lineNumberWidth = `${Math.max(2, String(formattedLineCount).length) + 1}ch`;
 
   return (
     <main className="app-shell">
@@ -229,10 +231,15 @@ export default function App() {
               <pre
                 aria-label="Formatted JSON"
                 data-stale={viewStatus === "invalid" ? "true" : "false"}
-                className={!formatted ? "empty-output" : undefined}
+                className={formatted ? "numbered-output" : "empty-output"}
+                style={
+                  formatted
+                    ? ({ "--line-number-width": lineNumberWidth } as CSSProperties)
+                    : undefined
+                }
                 dangerouslySetInnerHTML={
                   formatted
-                    ? { __html: highlightJson(formatted) }
+                    ? { __html: highlightJsonWithLineNumbers(formatted) }
                     : undefined
                 }
               >

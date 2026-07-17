@@ -59,6 +59,19 @@ test("uses a minimal React and Vite project structure", () => {
   assert.doesNotMatch(styles, /https?:\/\//);
   assert.doesNotMatch(styles, /\.panel:focus-within/);
   assert.doesNotMatch(styles, /textarea:focus-visible/);
+  assert.match(
+    styles,
+    /\.code-line::before\s*\{[^}]*content:\s*attr\(data-line-number\)/s,
+  );
+  assert.match(styles, /\.code-line\s*\{[^}]*display:\s*inline/s);
+  assert.match(
+    styles,
+    /\.workspace-divider::before\s*\{[^}]*opacity:\s*0/s,
+  );
+  assert.match(
+    styles,
+    /\.workspace-divider:hover::before,\s*\.workspace-divider:focus-visible::before,\s*\.workspace-divider:active::before/,
+  );
   for (const token of [
     "--color-text-accent-blue",
     "--color-text-accent-green",

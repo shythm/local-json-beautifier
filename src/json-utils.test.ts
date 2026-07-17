@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { formatJson, highlightJson } from "./json-utils";
+import {
+  formatJson,
+  highlightJson,
+  highlightJsonWithLineNumbers,
+} from "./json-utils";
 
 describe("formatJson", () => {
   it("returns an empty state for whitespace-only input", () => {
@@ -45,6 +49,30 @@ describe("highlightJson", () => {
 
   it("escapes user-controlled markup before highlighting", () => {
     const html = highlightJson('{"value":"<script>alert(1)</script>"}');
+
+    expect(html).not.toContain("<script>");
+    expect(html).toContain("&lt;script&gt;");
+  });
+});
+
+describe("highlightJsonWithLineNumbers", () => {
+  it("wraps highlighted JSON lines without changing their text", () => {
+    const formatted = '{\n  "name": "Ada"\n}';
+    const html = highlightJsonWithLineNumbers(formatted);
+
+    expect(html).toContain('class="code-line" data-line-number="1"');
+    expect(html).toContain('class="code-line" data-line-number="2"');
+    expect(html).toContain('class="code-line" data-line-number="3"');
+    expect(html).toContain('class="token key"');
+    const output = document.createElement("pre");
+    output.innerHTML = html;
+    expect(output.textContent).toBe(formatted);
+  });
+
+  it("escapes user-controlled markup before wrapping lines", () => {
+    const html = highlightJsonWithLineNumbers(
+      '{\n  "value": "<script>alert(1)</script>"\n}',
+    );
 
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;");

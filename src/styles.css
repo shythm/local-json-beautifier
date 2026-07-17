@@ -144,16 +144,20 @@ textarea {
   left: 50%;
   border-radius: 999px;
   background: var(--color-border-neutral);
+  opacity: 0;
   transform: translateX(-50%);
   transition:
     background-color var(--motion-transition-fast),
+    opacity var(--motion-transition-fast),
     width var(--motion-transition-fast);
 }
 
 .workspace-divider:hover::before,
-.workspace-divider:focus-visible::before {
+.workspace-divider:focus-visible::before,
+.workspace-divider:active::before {
   width: 4px;
   background: var(--color-state-focus);
+  opacity: 1;
 }
 
 .panel {
@@ -238,6 +242,23 @@ pre {
 
 pre[data-stale="true"] {
   opacity: var(--opacity-disabled);
+}
+
+.code-line {
+  display: inline;
+}
+
+.code-line::before {
+  content: attr(data-line-number);
+  display: inline-block;
+  width: var(--line-number-width);
+  margin-right: 16px;
+  padding-right: 12px;
+  border-right: 1px solid var(--color-border-neutral);
+  color: var(--color-text-neutral-lighter);
+  text-align: right;
+  user-select: none;
+  pointer-events: none;
 }
 
 .empty-output {

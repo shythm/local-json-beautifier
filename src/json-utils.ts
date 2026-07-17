@@ -95,3 +95,13 @@ export function highlightJson(formatted: string): string {
 
   return html + escapeHtml(formatted.slice(previousEnd));
 }
+
+export function highlightJsonWithLineNumbers(formatted: string): string {
+  return highlightJson(formatted)
+    .split("\n")
+    .map(
+      (line, index) =>
+        `<span class="code-line" data-line-number="${index + 1}">${line}</span>`,
+    )
+    .join("\n");
+}

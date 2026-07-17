@@ -47,6 +47,26 @@ describe("Local JSON Beautifier", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Valid JSON");
   });
 
+  it("shows visual-only one-based line numbers in formatted output", async () => {
+    renderApp();
+
+    fireEvent.change(screen.getByLabelText("JSON input"), {
+      target: { value: '{"ok":true}' },
+    });
+    await finishDebounce();
+
+    const output = screen.getByLabelText("Formatted JSON");
+    const lines = output.querySelectorAll(".code-line");
+
+    expect(lines).toHaveLength(3);
+    expect(Array.from(lines, (line) => line.getAttribute("data-line-number"))).toEqual([
+      "1",
+      "2",
+      "3",
+    ]);
+    expect(output.textContent).toBe('{\n  "ok": true\n}');
+  });
+
   it("reformats immediately when indentation changes and saves the preference", async () => {
     renderApp();
     fireEvent.change(screen.getByLabelText("JSON input"), {
