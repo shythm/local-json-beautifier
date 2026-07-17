@@ -1,11 +1,5 @@
 :root {
   --editor-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  --syntax-key: #78a9ff;
-  --syntax-string: #8bdc65;
-  --syntax-number: #f0b96a;
-  --syntax-boolean: #c79bf2;
-  --syntax-null: #f28eae;
-  --syntax-punctuation: #8996a3;
 }
 
 * {
@@ -127,10 +121,39 @@ textarea {
 .workspace {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns:
+    minmax(0, var(--source-panel-width))
+    14px
+    minmax(0, 1fr);
   min-height: 520px;
   padding: 18px 0 14px;
+}
+
+.workspace-divider {
+  position: relative;
+  cursor: col-resize;
+  outline: 0;
+  touch-action: none;
+}
+
+.workspace-divider::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  inset-block: 12px;
+  left: 50%;
+  border-radius: 999px;
+  background: var(--color-border-neutral);
+  transform: translateX(-50%);
+  transition:
+    background-color var(--motion-transition-fast),
+    width var(--motion-transition-fast);
+}
+
+.workspace-divider:hover::before,
+.workspace-divider:focus-visible::before {
+  width: 4px;
+  background: var(--color-state-focus);
 }
 
 .panel {
@@ -142,12 +165,6 @@ textarea {
   border-radius: var(--radius-16);
   background: var(--color-surface-low);
   box-shadow: var(--elevation-1);
-  transition: border-color var(--motion-transition-fast), box-shadow var(--motion-transition-fast);
-}
-
-.panel:focus-within {
-  border-color: var(--color-border-neutral-heavy);
-  box-shadow: var(--elevation-2);
 }
 
 .panel-header {
@@ -201,11 +218,6 @@ textarea {
   overflow: auto;
 }
 
-textarea:focus-visible {
-  outline: 2px solid var(--color-state-focus);
-  outline-offset: -2px;
-}
-
 textarea::placeholder {
   color: var(--color-text-neutral-lighter);
 }
@@ -243,27 +255,27 @@ pre[data-stale="true"] {
 }
 
 .token.key {
-  color: var(--syntax-key);
+  color: var(--color-text-accent-blue);
 }
 
 .token.string {
-  color: var(--syntax-string);
+  color: var(--color-text-accent-green);
 }
 
 .token.number {
-  color: var(--syntax-number);
+  color: var(--color-text-accent-orange);
 }
 
 .token.boolean {
-  color: var(--syntax-boolean);
+  color: var(--color-text-accent-purple);
 }
 
 .token.null {
-  color: var(--syntax-null);
+  color: var(--color-text-accent-pink);
 }
 
 .token.punctuation {
-  color: var(--syntax-punctuation);
+  color: var(--color-text-neutral-light);
 }
 
 .error-banner {
@@ -308,6 +320,10 @@ footer {
 
   .workspace {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .workspace-divider {
+    display: none;
   }
 
   textarea,

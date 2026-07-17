@@ -138,4 +138,60 @@ describe("Local JSON Beautifier", () => {
       screen.getByRole("button", { name: "Copy formatted JSON" }),
     ).toBeDisabled();
   });
+
+  it("resizes the JSON panels with accessible keyboard controls", () => {
+    renderApp();
+    const separator = screen.getByRole("separator", {
+      name: "Resize JSON panels",
+    });
+
+    expect(separator).toHaveAttribute("aria-valuemin", "25");
+    expect(separator).toHaveAttribute("aria-valuemax", "75");
+    expect(separator).toHaveAttribute("aria-valuenow", "50");
+
+    fireEvent.keyDown(separator, { key: "ArrowRight" });
+    expect(separator).toHaveAttribute("aria-valuenow", "52");
+
+    fireEvent.keyDown(separator, { key: "Home" });
+    expect(separator).toHaveAttribute("aria-valuenow", "25");
+
+    fireEvent.keyDown(separator, { key: "End" });
+    expect(separator).toHaveAttribute("aria-valuenow", "75");
+
+    fireEvent.doubleClick(separator);
+    expect(separator).toHaveAttribute("aria-valuenow", "50");
+  });
+
+  it("clamps pointer resizing to the supported panel range", () => {
+    renderApp();
+    const separator = screen.getByRole("separator", {
+      name: "Resize JSON panels",
+    });
+    const workspace = separator.parentElement as HTMLElement;
+    vi.spyOn(workspace, "getBoundingClientRect").mockReturnValue({
+      x: 100,
+      y: 0,
+      left: 100,
+      right: 1100,
+      top: 0,
+      bottom: 600,
+      width: 1000,
+      height: 600,
+      toJSON: () => ({}),
+    });
+    Object.defineProperties(separator, {
+      hasPointerCapture: { value: () => true },
+      releasePointerCapture: { value: vi.fn() },
+      setPointerCapture: { value: vi.fn() },
+    });
+
+    fireEvent.pointerDown(separator, { pointerId: 1, clientX: 600 });
+    fireEvent.pointerMove(workspace, { pointerId: 1, clientX: 1000 });
+    expect(separator).toHaveAttribute("aria-valuenow", "75");
+
+    fireEvent.pointerMove(workspace, { pointerId: 1, clientX: 0 });
+    expect(separator).toHaveAttribute("aria-valuenow", "25");
+
+    fireEvent.pointerUp(workspace, { pointerId: 1 });
+  });
 });

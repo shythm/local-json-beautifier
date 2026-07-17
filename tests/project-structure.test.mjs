@@ -18,6 +18,7 @@ test("uses a minimal React and Vite project structure", () => {
   for (const path of [
     "src/main.tsx",
     "src/App.tsx",
+    "src/ResizableWorkspace.tsx",
     "src/SystemThemeProvider.tsx",
     "src/json-utils.ts",
     "src/styles.css",
@@ -56,6 +57,18 @@ test("uses a minimal React and Vite project structure", () => {
   assert.doesNotMatch(styles, /--surface:/);
   assert.doesNotMatch(styles, /font-family:\s*Inter/);
   assert.doesNotMatch(styles, /https?:\/\//);
+  assert.doesNotMatch(styles, /\.panel:focus-within/);
+  assert.doesNotMatch(styles, /textarea:focus-visible/);
+  for (const token of [
+    "--color-text-accent-blue",
+    "--color-text-accent-green",
+    "--color-text-accent-orange",
+    "--color-text-accent-purple",
+    "--color-text-accent-pink",
+    "--color-text-neutral-light",
+  ]) {
+    assert.match(styles, new RegExp(`color: var\\(${token}\\)`));
+  }
   assert.match(packageJson.scripts.dev, /^vite\b/);
   assert.match(packageJson.scripts.build, /tsc --noEmit/);
   assert.match(packageJson.scripts.build, /vite build/);

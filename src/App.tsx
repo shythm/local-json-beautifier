@@ -13,6 +13,7 @@ import {
   type FormatResult,
   type JsonIndent,
 } from "./json-utils";
+import ResizableWorkspace from "./ResizableWorkspace";
 
 const INDENT_KEY = "json-beautifier-indent";
 const SAMPLE_JSON = `{
@@ -171,78 +172,81 @@ export default function App() {
         </div>
       </section>
 
-      <section className="workspace" aria-label="JSON formatter workspace">
-        <article className="panel">
-          <div className="panel-header">
-            <div>
-              <Text as="span" className="eyebrow" typo="11" bold>
-                Source
-              </Text>
-              <label htmlFor="json-input">JSON input</label>
-            </div>
-            <Text
-              as="span"
-              className="character-count"
-              typo="11"
-              color="text-neutral-lighter"
-            >
-              {source.length.toLocaleString()} chars
-            </Text>
-          </div>
-          <textarea
-            id="json-input"
-            value={source}
-            onChange={(event) => handleSourceChange(event.target.value)}
-            placeholder={'Paste or type JSON here…\n\n{"hello":"world"}'}
-            spellCheck={false}
-            autoCapitalize="off"
-            autoComplete="off"
-          />
-        </article>
-
-        <article className="panel output-panel">
-          <div className="panel-header">
-            <div>
-              <Text as="span" className="eyebrow" typo="11" bold>
-                Result
-              </Text>
-              <Text as="span" className="panel-title" typo="14" bold>
-                Formatted JSON
+      <ResizableWorkspace
+        sourcePanel={
+          <article className="panel">
+            <div className="panel-header">
+              <div>
+                <Text as="span" className="eyebrow" typo="11" bold>
+                  Source
+                </Text>
+                <label htmlFor="json-input">JSON input</label>
+              </div>
+              <Text
+                as="span"
+                className="character-count"
+                typo="11"
+                color="text-neutral-lighter"
+              >
+                {source.length.toLocaleString()} chars
               </Text>
             </div>
-            <Button
-              label={copyFeedback === "Copied" ? "Copied" : "Copy"}
-              variant="filled"
-              semantic="primary"
-              size="m"
-              type="button"
-              onClick={handleCopy}
-              disabled={viewStatus !== "valid" || !formatted}
-              aria-label="Copy formatted JSON"
+            <textarea
+              id="json-input"
+              value={source}
+              onChange={(event) => handleSourceChange(event.target.value)}
+              placeholder={'Paste or type JSON here…\n\n{"hello":"world"}'}
+              spellCheck={false}
+              autoCapitalize="off"
+              autoComplete="off"
             />
-          </div>
+          </article>
+        }
+        resultPanel={
+          <article className="panel output-panel">
+            <div className="panel-header">
+              <div>
+                <Text as="span" className="eyebrow" typo="11" bold>
+                  Result
+                </Text>
+                <Text as="span" className="panel-title" typo="14" bold>
+                  Formatted JSON
+                </Text>
+              </div>
+              <Button
+                label={copyFeedback === "Copied" ? "Copied" : "Copy"}
+                variant="filled"
+                semantic="primary"
+                size="m"
+                type="button"
+                onClick={handleCopy}
+                disabled={viewStatus !== "valid" || !formatted}
+                aria-label="Copy formatted JSON"
+              />
+            </div>
 
-          <div className="output-wrap">
-            <pre
-              aria-label="Formatted JSON"
-              data-stale={viewStatus === "invalid" ? "true" : "false"}
-              className={!formatted ? "empty-output" : undefined}
-              dangerouslySetInnerHTML={
-                formatted
-                  ? { __html: highlightJson(formatted) }
-                  : undefined
-              }
-            >
-              {!formatted ? "Formatted output will appear here" : undefined}
-            </pre>
-            {viewStatus === "invalid" && formatted ? (
-              <Badge className="stale-badge" size="s" variant="red">
-                Last valid result
-              </Badge>
-            ) : null}
-          </div>
-        </article>
-      </section>
+            <div className="output-wrap">
+              <pre
+                aria-label="Formatted JSON"
+                data-stale={viewStatus === "invalid" ? "true" : "false"}
+                className={!formatted ? "empty-output" : undefined}
+                dangerouslySetInnerHTML={
+                  formatted
+                    ? { __html: highlightJson(formatted) }
+                    : undefined
+                }
+              >
+                {!formatted ? "Formatted output will appear here" : undefined}
+              </pre>
+              {viewStatus === "invalid" && formatted ? (
+                <Badge className="stale-badge" size="s" variant="red">
+                  Last valid result
+                </Badge>
+              ) : null}
+            </div>
+          </article>
+        }
+      />
 
       {error ? (
         <div className="error-banner" role="alert">
